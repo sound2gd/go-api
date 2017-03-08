@@ -9,11 +9,12 @@ func TestEncoding(t *testing.T) {
 	testData := []*Endpoint{
 		nil,
 		{
-			Name:    "Foo.Bar",
-			Handler: Default,
-			Host:    []string{"foo.com"},
-			Method:  []string{"GET"},
-			Path:    []string{"/test"},
+			Name:        "Foo.Bar",
+			Description: "A test endpoint",
+			Handler:     Default,
+			Host:        []string{"foo.com"},
+			Method:      []string{"GET"},
+			Path:        []string{"/test"},
 		},
 	}
 
@@ -65,6 +66,7 @@ func TestEncoding(t *testing.T) {
 
 		// check encoded map
 		name := e["endpoint"]
+		desc := e["description"]
 		method := strings.Split(e["method"], ",")
 		path := strings.Split(e["path"], ",")
 		host := strings.Split(e["host"], ",")
@@ -72,6 +74,9 @@ func TestEncoding(t *testing.T) {
 
 		if name != d.Name {
 			t.Fatalf("expected %v got %v", d.Name, name)
+		}
+		if desc != d.Description {
+			t.Fatalf("expected %v got %v", d.Description, desc)
 		}
 		if handler != d.Handler {
 			t.Fatalf("expected %v got %v", d.Handler, handler)
@@ -88,6 +93,9 @@ func TestEncoding(t *testing.T) {
 
 		if de.Name != d.Name {
 			t.Fatalf("expected %v got %v", d.Name, de.Name)
+		}
+		if de.Description != d.Description {
+			t.Fatalf("expected %v got %v", d.Description, de.Description)
 		}
 		if de.Handler != d.Handler {
 			t.Fatalf("expected %v got %v", d.Handler, de.Handler)

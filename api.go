@@ -24,6 +24,8 @@ type Handler string
 type Endpoint struct {
 	// RPC Method e.g. Greeter.Hello
 	Name string
+	// Description e.g what's this endpoint for
+	Description string
 	// API Handler e.g rpc, proxy
 	Handler Handler
 	// HTTP Host e.g example.com
@@ -41,11 +43,12 @@ func Encode(e *Endpoint) map[string]string {
 	}
 
 	return map[string]string{
-		"endpoint": e.Name,
-		"method":   strings.Join(e.Method, ","),
-		"path":     strings.Join(e.Path, ","),
-		"host":     strings.Join(e.Host, ","),
-		"handler":  string(e.Handler),
+		"endpoint":    e.Name,
+		"description": e.Description,
+		"method":      strings.Join(e.Method, ","),
+		"path":        strings.Join(e.Path, ","),
+		"host":        strings.Join(e.Host, ","),
+		"handler":     string(e.Handler),
 	}
 }
 
@@ -56,11 +59,12 @@ func Decode(e map[string]string) *Endpoint {
 	}
 
 	return &Endpoint{
-		Name:    e["endpoint"],
-		Method:  strings.Split(e["method"], ","),
-		Path:    strings.Split(e["path"], ","),
-		Host:    strings.Split(e["host"], ","),
-		Handler: Handler(e["handler"]),
+		Name:        e["endpoint"],
+		Description: e["description"],
+		Method:      strings.Split(e["method"], ","),
+		Path:        strings.Split(e["path"], ","),
+		Host:        strings.Split(e["host"], ","),
+		Handler:     Handler(e["handler"]),
 	}
 }
 
