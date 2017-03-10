@@ -1,8 +1,11 @@
 package api
 
 import (
+	"errors"
+	"regexp"
 	"strings"
 
+	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/server"
 )
 
@@ -36,6 +39,14 @@ type Endpoint struct {
 	Path []string
 }
 
+// Service represents an API service
+type Service struct {
+	// The endpoint for this service
+	Endpoint *Endpoint
+	// A version of this service
+	Services []*registry.Service
+}
+
 // Encode encodes an endpoint to endpoint metadata
 func Encode(e *Endpoint) map[string]string {
 	if e == nil {
@@ -66,6 +77,34 @@ func Decode(e map[string]string) *Endpoint {
 		Host:        strings.Split(e["host"], ","),
 		Handler:     Handler(e["handler"]),
 	}
+}
+
+// Validate validates an endpoint to guarantee it won't blow up when being served
+func Validate(e *Endpoint) error {
+	if e == nil {
+		return errors.New("endpoint is nil")
+	}
+
+	if len(e.Name) == 0 {
+		return errors.New("name required")
+	}
+
+	for _, p := range e.Path {
+		_, err := regexp.CompilePOSIX(p)
+		if err != nil {
+			return err
+		}
+	}
+
+	switch e.Handler {
+	// only match these handlers
+	case Api, Proxy, Rpc:
+		// valid
+	default:
+		return errors.New("invalid handler")
+	}
+
+	return nil
 }
 
 // WithEndpoint returns a server.HandlerOption with endpoint metadata set
