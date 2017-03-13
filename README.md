@@ -42,7 +42,7 @@ service.Init()
 proto.RegisterGreeterHandler(service.Server(), new(Greeter), api.WithEndpoint(&api.Endpoint{
 	// The RPC method
 	Name: "Greeter.Hello",
-	// The HTTP paths
+	// The HTTP paths. This can be a POSIX regex
 	Path: []string{"/greeter"},
 	// The HTTP Methods for this endpoint
 	Method: []string{"GET", "POST"},
