@@ -11,7 +11,7 @@ import (
 
 const (
 	// Default defines the default handler
-	Default Handler = "api"
+	Default Handler = "meta"
 	// serves api.Request and api.Response
 	Api Handler = "api"
 	// services an RPC request/response
@@ -41,10 +41,28 @@ type Endpoint struct {
 
 // Service represents an API service
 type Service struct {
+	// Name of service
+	Name string
 	// The endpoint for this service
 	Endpoint *Endpoint
-	// A version of this service
+	// Versions of this service
 	Services []*registry.Service
+}
+
+func strip(s string) string {
+	return strings.TrimSpace(s)
+}
+
+func slice(s string) []string {
+	var sl []string
+
+	for _, p := range strings.Split(s, ",") {
+		if str := strip(p); len(str) > 0 {
+			sl = append(sl, strip(p))
+		}
+	}
+
+	return sl
 }
 
 // Encode encodes an endpoint to endpoint metadata
@@ -72,9 +90,9 @@ func Decode(e map[string]string) *Endpoint {
 	return &Endpoint{
 		Name:        e["endpoint"],
 		Description: e["description"],
-		Method:      strings.Split(e["method"], ","),
-		Path:        strings.Split(e["path"], ","),
-		Host:        strings.Split(e["host"], ","),
+		Method:      slice(e["method"]),
+		Path:        slice(e["path"]),
+		Host:        slice(e["host"]),
 		Handler:     Handler(e["handler"]),
 	}
 }
