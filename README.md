@@ -39,7 +39,7 @@ service := micro.NewService(
 service.Init()
 
 // Register handler and the endpoint mapping
-proto.RegisterGreeterHandler(service.Server(), new(Greeter), api.WithEndpoint(&Endpoint{
+proto.RegisterGreeterHandler(service.Server(), new(Greeter), api.WithEndpoint(&api.Endpoint{
 	// The RPC method
 	Name: "Greeter.Hello",
 	// The HTTP paths
@@ -47,7 +47,7 @@ proto.RegisterGreeterHandler(service.Server(), new(Greeter), api.WithEndpoint(&E
 	// The HTTP Methods for this endpoint
 	Method: []string{"GET", "POST"},
 	// The API handler to use
-	Handler: RPCHandler,
+	Handler: api.Rpc,
 })
 
 // Run it as usual
