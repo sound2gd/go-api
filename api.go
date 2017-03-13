@@ -35,7 +35,7 @@ type Endpoint struct {
 	Host []string
 	// HTTP Methods e.g GET, POST
 	Method []string
-	// HTTP Path e.g /greeter
+	// HTTP Path e.g /greeter. Expect POSIX regex
 	Path []string
 }
 
