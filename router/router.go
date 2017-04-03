@@ -154,7 +154,7 @@ func (r *router) store(services []*registry.Service) {
 
 		// ok we know this thing
 		// delete delete delete
-		delete(eps, key)
+		delete(r.eps, key)
 	}
 
 	// now set the eps we have
