@@ -81,6 +81,10 @@ func TestProxyRoute(t *testing.T) {
 			namespace + ".foo-bar",
 		},
 		{
+			"/foo-bar-baz",
+			namespace + ".foo-bar-baz",
+		},
+		{
 			"/foo/bar/bar",
 			namespace + ".foo",
 		},
