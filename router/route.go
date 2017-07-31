@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	proxyRe   = regexp.MustCompile("^[a-zA-Z0-9]+$")
+	proxyRe   = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]$")
 	versionRe = regexp.MustCompilePOSIX("^v[0-9]+$")
 )
 
