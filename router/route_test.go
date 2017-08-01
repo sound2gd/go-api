@@ -73,6 +73,14 @@ func TestProxyRoute(t *testing.T) {
 		service string
 	}{
 		{
+			"/f",
+			namespace + ".f",
+		},
+		{
+			"/f-b",
+			namespace + ".f-b",
+		},
+		{
 			"/foo/bar",
 			namespace + ".foo",
 		},
