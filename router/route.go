@@ -23,7 +23,7 @@ func apiRoute(ns, p string) (string, string) {
 	// Use all parts as method
 	if len(parts) <= 2 {
 		service := ns + "." + strings.Join(parts[:len(parts)-1], ".")
-		method := strings.Title(strings.Join(parts, "."))
+		method := methodName(parts)
 		return service, method
 	}
 
@@ -31,14 +31,14 @@ func apiRoute(ns, p string) (string, string) {
 	// /v1/foo/bar => service: v1.foo method: Foo.bar
 	if len(parts) == 3 && versionRe.Match([]byte(parts[0])) {
 		service := ns + "." + strings.Join(parts[:len(parts)-1], ".")
-		method := strings.Title(strings.Join(parts[len(parts)-2:], "."))
+		method := methodName(parts[len(parts)-2:])
 		return service, method
 	}
 
 	// Service is everything minus last two parts
 	// Method is the last two parts
 	service := ns + "." + strings.Join(parts[:len(parts)-2], ".")
-	method := strings.Title(strings.Join(parts[len(parts)-2:], "."))
+	method := methodName(parts[len(parts)-2:])
 	return service, method
 }
 
@@ -73,4 +73,21 @@ func proxyRoute(ns string, p string) string {
 	}
 
 	return ns + "." + service
+}
+
+func methodName(parts []string) string {
+	for i, part := range parts {
+		parts[i] = toCamel(part)
+	}
+
+	return strings.Join(parts, ".")
+}
+
+func toCamel(s string) string {
+	words := strings.Split(s, "-")
+	var out string
+	for _, word := range words {
+		out += strings.Title(word)
+	}
+	return out
 }
