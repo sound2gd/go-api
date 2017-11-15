@@ -4,6 +4,8 @@ Go API is a pluggable API framework
 
 It includes a set of packages for composing API services
 
+Note: This is a WIP
+
 ## Endpoints
 
 Endpoints allow a service to dynamically configure the micro api handler
