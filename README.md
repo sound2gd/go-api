@@ -2,7 +2,7 @@
 
 Go API is a pluggable API framework
 
-It includes a set of packages for composing API services
+It builds on go-micro and includes a set of packages for composing HTTP based APIs
 
 Note: This is a WIP
 
