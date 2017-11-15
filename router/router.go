@@ -1,3 +1,4 @@
+// Package router provides api service routing
 package router
 
 import (
