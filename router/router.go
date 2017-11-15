@@ -13,6 +13,7 @@ import (
 
 	"github.com/micro/go-api"
 	"github.com/micro/go-micro/registry"
+	"github.com/micro/go-rcache"
 )
 
 // Router is used to determine an endpoint for a request
@@ -31,7 +32,7 @@ type router struct {
 	opts Options
 
 	// registry cache
-	c *cache
+	rc rcache.Cache
 
 	sync.RWMutex
 	eps map[string]*api.Service
@@ -67,7 +68,7 @@ func (r *router) refresh() {
 			if !strings.HasPrefix(s.Name, r.opts.Namespace) {
 				continue
 			}
-			service, err := r.c.get(s.Name)
+			service, err := r.rc.GetService(s.Name)
 			if err != nil {
 				continue
 			}
@@ -90,11 +91,8 @@ func (r *router) process(res *registry.Result) {
 		return
 	}
 
-	// cache
-	r.c.update(res)
-
 	// get entry from cache
-	service, err := r.c.get(res.Service.Name)
+	service, err := r.rc.GetService(res.Service.Name)
 	if err != nil {
 		return
 	}
@@ -215,6 +213,7 @@ func (r *router) Close() error {
 		return nil
 	default:
 		close(r.exit)
+		r.rc.Stop()
 	}
 	return nil
 }
@@ -308,7 +307,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 		// get service route
 		name, method := apiRoute(r.opts.Namespace, req.URL.Path)
 		// get service
-		services, err := r.c.get(name)
+		services, err := r.rc.GetService(name)
 		if err != nil {
 			return nil, err
 		}
@@ -327,7 +326,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 		// get proxy route
 		name := proxyRoute(r.opts.Namespace, req.URL.Path)
 		// get service
-		services, err := r.c.get(name)
+		services, err := r.rc.GetService(name)
 		if err != nil {
 			return nil, err
 		}
@@ -348,7 +347,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 		// get service route
 		name, method := apiRoute(r.opts.Namespace, req.URL.Path)
 		// get service
-		services, err := r.c.get(name)
+		services, err := r.rc.GetService(name)
 		if err != nil {
 			return nil, err
 		}
@@ -371,7 +370,7 @@ func newRouter(opts ...Option) *router {
 	r := &router{
 		exit: make(chan bool),
 		opts: options,
-		c:    newCache(options.Registry),
+		rc:   rcache.New(options.Registry),
 		eps:  make(map[string]*api.Service),
 	}
 	go r.watch()
