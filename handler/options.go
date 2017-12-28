@@ -1,11 +1,13 @@
 package handler
 
 import (
+	"github.com/micro/go-api/router"
 	"github.com/micro/go-micro"
 )
 
 type Options struct {
 	Namespace string
+	Router    router.Router
 	Service   micro.Service
 }
 
@@ -28,12 +30,24 @@ func NewOptions(opts ...Option) Options {
 		WithNamespace("go.micro.api")(&options)
 	}
 
+	// set the router
+	if options.Router == nil {
+		r := router.NewRouter(router.WithNamespace("go.micro.api"))
+		WithRouter(r)(&options)
+	}
+
 	return options
 }
 
 func WithNamespace(s string) Option {
 	return func(o *Options) {
 		o.Namespace = s
+	}
+}
+
+func WithRouter(r router.Router) Option {
+	return func(o *Options) {
+		o.Router = r
 	}
 }
 
