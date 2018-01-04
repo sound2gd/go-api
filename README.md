@@ -6,6 +6,16 @@ It builds on go-micro and includes a set of packages for composing HTTP based AP
 
 Note: This is a WIP
 
+## Handlers
+
+Handlers are HTTP handlers which provide a single entry point and act as a gateway to backend services. 
+Handlers manage dynamic routing from a http request to unique microservices.
+
+Current handlers implemented
+
+- web - http reverse proxy including web sockets
+- event - publishes http request as an event on a message bus
+
 ## Endpoints
 
 Endpoints allow a service to dynamically configure the micro api handler
