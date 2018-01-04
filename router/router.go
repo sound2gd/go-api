@@ -18,6 +18,8 @@ import (
 
 // Router is used to determine an endpoint for a request
 type Router interface {
+	// Returns options
+	Options() Options
 	// Stop the router
 	Close() error
 	// Endpoint returns an api.Service endpoint or an error if it does not exist
@@ -205,6 +207,10 @@ func (r *router) watch() {
 			r.process(res)
 		}
 	}
+}
+
+func (r *router) Options() Options {
+	return r.opts
 }
 
 func (r *router) Close() error {
