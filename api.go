@@ -14,6 +14,8 @@ const (
 	Default Handler = "meta"
 	// serves api.Request and api.Response
 	Api Handler = "api"
+	// serves the async api.Event handler
+	Event Handler = "event"
 	// services an RPC request/response
 	Rpc Handler = "rpc"
 	// proxies a http request
