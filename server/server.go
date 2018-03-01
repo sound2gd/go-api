@@ -82,7 +82,8 @@ func (s *server) Start() error {
 
 	go func() {
 		if err := http.Serve(l, s.mux); err != nil {
-			log.Fatal(err)
+			// temporary fix
+			//log.Fatal(err)
 		}
 	}()
 
