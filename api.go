@@ -20,6 +20,8 @@ const (
 	Rpc Handler = "rpc"
 	// proxies a http request
 	Proxy Handler = "proxy"
+	// serves the web proxy handler
+	Web Handler = "web"
 )
 
 // Handler defines the type of handler uses by the micro api
