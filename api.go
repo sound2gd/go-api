@@ -16,10 +16,12 @@ const (
 	Api Handler = "api"
 	// serves the async api.Event handler
 	Event Handler = "event"
-	// services an RPC request/response
-	Rpc Handler = "rpc"
+	// forwards as http request
+	Http Handler = "http"
 	// proxies a http request
 	Proxy Handler = "proxy"
+	// services an RPC request/response
+	Rpc Handler = "rpc"
 	// serves the web proxy handler
 	Web Handler = "web"
 )
@@ -120,7 +122,7 @@ func Validate(e *Endpoint) error {
 
 	switch e.Handler {
 	// only match these handlers
-	case Api, Proxy, Rpc:
+	case Api, Event, Http, Proxy, Rpc, Web:
 		// valid
 	default:
 		return errors.New("invalid handler")
