@@ -1,118 +1,104 @@
 // Package web contains the web handler including websocket support
-package web
+package handler
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/http/httputil"
-	"regexp"
+	"net/url"
 	"strings"
 
+	"github.com/micro/go-api"
 	"github.com/micro/go-api/handler"
 	"github.com/micro/go-micro/selector"
 )
 
-type web struct {
-	options handler.Options
-
-	rp *httputil.ReverseProxy
-	dr func(r *http.Request)
+type webHandler struct {
+	opts handler.Options
+	s    *api.Service
 }
 
-var (
-	re = regexp.MustCompile("^[a-zA-Z0-9]+$")
-
-	BasePathHeader = "X-Micro-Web-Base-Path"
-)
-
-func isWebSocket(r *http.Request) bool {
-	contains := func(key, val string) bool {
-		vv := strings.Split(r.Header.Get(key), ",")
-		for _, v := range vv {
-			if val == strings.ToLower(strings.TrimSpace(v)) {
-				return true
-			}
-		}
-		return false
-	}
-
-	if contains("Connection", "upgrade") && contains("Upgrade", "websocket") {
-		return true
-	}
-
-	return false
-}
-
-func director(ns string, sel selector.Selector) func(r *http.Request) {
-	return func(r *http.Request) {
-		kill := func() {
-			r.URL.Host = ""
-			r.URL.Path = ""
-			r.URL.Scheme = ""
-			r.Host = ""
-			r.RequestURI = ""
-		}
-
-		parts := strings.Split(r.URL.Path, "/")
-		if len(parts) < 2 {
-			kill()
-			return
-		}
-		if !re.MatchString(parts[1]) {
-			kill()
-			return
-		}
-		next, err := sel.Select(ns + "." + parts[1])
-		if err != nil {
-			kill()
-			return
-		}
-
-		s, err := next()
-		if err != nil {
-			kill()
-			return
-		}
-
-		r.Header.Set(BasePathHeader, "/"+parts[1])
-		r.URL.Host = fmt.Sprintf("%s:%d", s.Address, s.Port)
-		r.URL.Path = "/" + strings.Join(parts[2:], "/")
-		r.URL.Scheme = "http"
-		r.Host = r.URL.Host
-	}
-}
-
-func (w *web) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
-	if !isWebSocket(r) {
-		// the usual path
-		w.rp.ServeHTTP(wr, r)
+func (wh *webHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	service, err := wh.getService(r)
+	if err != nil {
+		w.WriteHeader(500)
 		return
 	}
 
-	// the websocket path
+	if len(service) == 0 {
+		w.WriteHeader(404)
+		return
+	}
+
+	if isWebSocket(r) {
+		wh.serveWebSocket(service, w, r)
+		return
+	}
+
+	rp, err := url.Parse(service)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	httputil.NewSingleHostReverseProxy(rp).ServeHTTP(w, r)
+}
+
+// getService returns the service for this request from the selector
+func (wh *webHandler) getService(r *http.Request) (string, error) {
+	var service *api.Service
+
+	if wh.s != nil {
+		// we were given the service
+		service = wh.s
+	} else if wh.opts.Router != nil {
+		// try get service from router
+		s, err := wh.opts.Router.Route(r)
+		if err != nil {
+			return "", err
+		}
+		service = s
+	} else {
+		// we have no way of routing the request
+		return "", errors.New("no route found")
+	}
+
+	// create a random selector
+	next := selector.Random(service.Services)
+
+	// get the next node
+	s, err := next()
+	if err != nil {
+		return "", nil
+	}
+
+	return fmt.Sprintf("http://%s:%d", s.Address, s.Port), nil
+}
+
+// serveWebSocket used to serve a web socket proxied connection
+func (wh *webHandler) serveWebSocket(host string, w http.ResponseWriter, r *http.Request) {
 	req := new(http.Request)
 	*req = *r
-	w.dr(req)
-	host := req.URL.Host
 
 	if len(host) == 0 {
-		http.Error(wr, "invalid host", 500)
+		http.Error(w, "invalid host", 500)
 		return
 	}
 
 	// connect to the backend host
 	conn, err := net.Dial("tcp", host)
 	if err != nil {
-		http.Error(wr, err.Error(), 500)
+		http.Error(w, err.Error(), 500)
 		return
 	}
 
 	// hijack the connection
-	hj, ok := wr.(http.Hijacker)
+	hj, ok := w.(http.Hijacker)
 	if !ok {
-		http.Error(wr, "failed to connect", 500)
+		http.Error(w, "failed to connect", 500)
 		return
 	}
 
@@ -141,21 +127,39 @@ func (w *web) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
 	<-errCh
 }
 
-func (w *web) String() string {
+func isWebSocket(r *http.Request) bool {
+	contains := func(key, val string) bool {
+		vv := strings.Split(r.Header.Get(key), ",")
+		for _, v := range vv {
+			if val == strings.ToLower(strings.TrimSpace(v)) {
+				return true
+			}
+		}
+		return false
+	}
+
+	if contains("Connection", "upgrade") && contains("Upgrade", "websocket") {
+		return true
+	}
+
+	return false
+}
+
+func (wh *webHandler) String() string {
 	return "web"
 }
 
 func NewHandler(opts ...handler.Option) handler.Handler {
+	return &webHandler{
+		opts: handler.NewOptions(opts...),
+	}
+}
+
+func WithService(s *api.Service, opts ...handler.Option) handler.Handler {
 	options := handler.NewOptions(opts...)
 
-	dr := director(
-		options.Namespace,
-		options.Service.Client().Options().Selector,
-	)
-
-	return &web{
-		options: options,
-		rp:      &httputil.ReverseProxy{Director: dr},
-		dr:      dr,
+	return &webHandler{
+		opts: options,
+		s:    s,
 	}
 }
