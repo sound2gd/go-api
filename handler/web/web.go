@@ -146,11 +146,7 @@ func (w *web) String() string {
 }
 
 func NewHandler(opts ...handler.Option) handler.Handler {
-	var options handler.Options
-
-	for _, o := range opts {
-		o(&options)
-	}
+	options := handler.NewOptions(opts...)
 
 	dr := director(
 		options.Namespace,
