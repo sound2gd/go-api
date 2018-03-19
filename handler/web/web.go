@@ -1,5 +1,5 @@
 // Package web contains the web handler including websocket support
-package handler
+package web
 
 import (
 	"errors"
