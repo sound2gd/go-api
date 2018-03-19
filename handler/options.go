@@ -39,18 +39,21 @@ func NewOptions(opts ...Option) Options {
 	return options
 }
 
+// WithNamespace specifies the namespace for the handler
 func WithNamespace(s string) Option {
 	return func(o *Options) {
 		o.Namespace = s
 	}
 }
 
+// WithRouter specifies a router to be used by the handler
 func WithRouter(r router.Router) Option {
 	return func(o *Options) {
 		o.Router = r
 	}
 }
 
+// WithService specifies a micro.Service
 func WithService(s micro.Service) Option {
 	return func(o *Options) {
 		o.Service = s
