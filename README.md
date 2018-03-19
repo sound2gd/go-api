@@ -13,8 +13,69 @@ Handlers manage dynamic routing from a http request to unique microservices.
 
 Current handlers implemented
 
-- web - http reverse proxy including web sockets
-- event - publishes http request as an event on a message bus
+- [`api`](#api-handler) - Handles any HTTP request. Gives full control over the http request/response via RPC.
+- [`event`](#event-handler) -  Handles any HTTP request and publishes to a message bus.
+- [`http`](#http-handler) - Handles any HTTP request and forwards as a reverse proxy.
+- [`rpc`](#rpc-handler) - Handles json and protobuf POST requests. Forwards as RPC.
+- [`web`](#web-handler) - The HTTP handler with web socket support included.
+
+### API Handler
+
+The API handler is the default handler. It serves any HTTP requests and forwards on as an RPC request with a specific format.
+
+- Content-Type: Any
+- Body: Any
+- Forward Format: [api.Request](https://github.com/micro/go-api/blob/master/proto/api.proto#L11)/[api.Response](https://github.com/micro/go-api/blob/master/proto/api.proto#L21)
+- Path: `/[service]/[method]`
+- Resolver: Path is used to resolve service and method
+- Configure: Flag `--handler=api` or env var `MICRO_API_HANDLER=api`
+- The default handler when no handler is specified
+
+### Event Handler
+
+The event handler serves HTTP and forwards the request as a message over a message bus using the go-micro broker.
+
+- Content-Type: Any
+- Body: Any
+- Forward Format: Request is formatted as [go-api/proto.Event](https://github.com/micro/go-api/blob/master/proto/api.proto#L28L39) 
+- Path: `/[topic]/[event]`
+- Resolver: Path is used to resolve topic and event name
+- Configure: Flag `--handler=event` or env var `MICRO_API_HANDLER=event`
+
+### HTTP Handler
+
+The http handler is a http reserve proxy with built in service discovery.
+
+- Content-Type: Any
+- Body: Any
+- Forward Format: HTTP Reverse proxy
+- Path: `/[service]`
+- Resolver: Path is used to resolve service name
+- Configure: Flag `--handler=http` or env var `MICRO_API_HANDLER=http`
+- REST can be implemented behind the API as microservices
+
+### RPC Handler
+
+The RPC handler serves json or protobuf HTTP POST requests and forwards as an RPC request.
+
+- Content-Type: `application/json` or `application/protobuf`
+- Body: JSON or Protobuf
+- Forward Format: json-rpc or proto-rpc based on content
+- Path: `/[service]/[method]`
+- Resolver: Path is used to resolve service and method
+- Configure: Flag `--handler=rpc` or env var `MICRO_API_HANDLER=rpc`
+
+### Web Handler
+
+The web handler is a http reserve proxy with built in service discovery and web socket support.
+
+- Content-Type: Any
+- Body: Any
+- Forward Format: HTTP Reverse proxy including web sockets
+- Path: `/[service]`
+- Resolver: Path is used to resolve service name
+- Configure: Flag `--handler=web` or env var `MICRO_API_HANDLER=web`
+
 
 ## Endpoints
 
