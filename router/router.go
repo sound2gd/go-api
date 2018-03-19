@@ -327,8 +327,8 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 			},
 			Services: services,
 		}, nil
-	// proxy handler
-	case api.Proxy:
+	// http handler
+	case api.Http, api.Proxy, api.Web:
 		// get proxy route
 		name := proxyRoute(r.opts.Namespace, req.URL.Path)
 		// get service
