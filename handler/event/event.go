@@ -30,17 +30,22 @@ func eventName(parts []string) string {
 func evRoute(ns, p string) (string, string) {
 	p = path.Clean(p)
 	p = strings.TrimPrefix(p, "/")
+
+	if len(p) == 0 {
+		return ns, "event"
+	}
+
 	parts := strings.Split(p, "/")
 
 	// no path
 	if len(parts) == 0 {
 		// topic: namespace
 		// action: event
-		return ns, "event"
+		return strings.Trim(ns, "."), "event"
 	}
 
 	// Treat /v[0-9]+ as versioning
-	// /v1/foo/bar => topic: v1.foo action: foo.bar
+	// /v1/foo/bar => topic: v1.foo action: bar
 	if len(parts) >= 2 && versionRe.Match([]byte(parts[0])) {
 		topic := ns + "." + strings.Join(parts[:2], ".")
 		action := eventName(parts[1:])
@@ -48,9 +53,9 @@ func evRoute(ns, p string) (string, string) {
 	}
 
 	// /foo => topic: ns.foo action: foo
-	// /foo/bar => topic: ns.foo action: foo.bar
+	// /foo/bar => topic: ns.foo action: bar
 	topic := ns + "." + strings.Join(parts[:1], ".")
-	action := eventName(parts)
+	action := eventName(parts[1:])
 
 	return topic, action
 }
