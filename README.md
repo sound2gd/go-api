@@ -6,6 +6,11 @@ It builds on go-micro and includes a set of packages for composing HTTP based AP
 
 Note: This is a WIP
 
+## Getting Started
+
+- [Handlers](#handlers) - The http handlers supported
+- [Endpoints](#endpoints) - Defining custom routes using endpoints
+
 ## Handlers
 
 Handlers are HTTP handlers which provide a single entry point and act as a gateway to backend services. 
