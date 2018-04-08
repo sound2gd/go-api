@@ -14,7 +14,7 @@ import (
 	"github.com/micro/go-micro/errors"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/selector"
-	"github.com/micro/misc/lib/ctx"
+	"github.com/micro/util/go/lib/ctx"
 )
 
 type rpcHandler struct {

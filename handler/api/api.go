@@ -9,7 +9,7 @@ import (
 	"github.com/micro/go-micro/errors"
 	"github.com/micro/go-micro/selector"
 	api "github.com/micro/micro/api/proto"
-	"github.com/micro/misc/lib/ctx"
+	"github.com/micro/util/go/lib/ctx"
 )
 
 type apiHandler struct {
