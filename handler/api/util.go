@@ -24,6 +24,7 @@ func requestToProto(r *http.Request) (*api.Request, error) {
 		Header: make(map[string]*api.Pair),
 		Get:    make(map[string]*api.Pair),
 		Post:   make(map[string]*api.Pair),
+		Url:    r.URL.String(),
 	}
 
 	ct, _, err := mime.ParseMediaType(r.Header.Get("Content-Type"))
