@@ -43,6 +43,11 @@ func TestApiRoute(t *testing.T) {
 			"Cat.Car",
 		},
 		{
+			"/foo/fooBar/bazCat",
+			namespace + ".foo",
+			"FooBar.BazCat",
+		},
+		{
 			"/v1/foo/bar",
 			namespace + ".v1.foo",
 			"Foo.Bar",
