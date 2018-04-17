@@ -33,14 +33,14 @@ func (wh *webHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if isWebSocket(r) {
-		wh.serveWebSocket(service, w, r)
-		return
-	}
-
 	rp, err := url.Parse(service)
 	if err != nil {
 		w.WriteHeader(500)
+		return
+	}
+
+	if isWebSocket(r) {
+		wh.serveWebSocket(rp.Host, w, r)
 		return
 	}
 
