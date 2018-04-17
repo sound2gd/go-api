@@ -8,6 +8,7 @@ message Pair {
 }
 
 // A HTTP request as RPC
+// Forward by the api handler
 message Request {
         string method = 1;
         string path = 2;
@@ -19,6 +20,7 @@ message Request {
 }
 
 // A HTTP response as RPC
+// Expected response for the api handler
 message Response {
         int32 statusCode = 1;
         map<string, Pair> header = 2;
@@ -26,6 +28,7 @@ message Response {
 }
 
 // A HTTP event as RPC
+// Forwarded by the event handler
 message Event {
 	// e.g login
 	string name = 1;
