@@ -92,7 +92,12 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// create request/response
 		var response json.RawMessage
-		req := c.NewJsonRequest(service.Name, service.Endpoint.Name, &request)
+		req := c.NewRequest(
+			service.Name,
+			service.Endpoint.Name,
+			&request,
+			client.WithContentType("application/json"),
+		)
 
 		// create context
 		cx := ctx.FromRequest(r)
@@ -132,7 +137,7 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		// create request/response
 		response := &proto.Message{}
-		req := c.NewProtoRequest(service.Name, service.Endpoint.Name, request)
+		req := c.NewRequest(service.Name, service.Endpoint.Name, request)
 
 		// create context
 		cx := ctx.FromRequest(r)
