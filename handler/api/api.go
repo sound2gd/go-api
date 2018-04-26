@@ -74,6 +74,8 @@ func (a *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Write([]byte(ce.Error()))
 		return
+	} else if rsp.StatusCode == 0 {
+		rsp.StatusCode = http.StatusOK
 	}
 
 	for _, header := range rsp.GetHeader() {
