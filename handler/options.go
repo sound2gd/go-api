@@ -30,12 +30,6 @@ func NewOptions(opts ...Option) Options {
 		WithNamespace("go.micro.api")(&options)
 	}
 
-	// set the router
-	if options.Router == nil {
-		r := router.NewRouter(router.WithNamespace("go.micro.api"))
-		WithRouter(r)(&options)
-	}
-
 	return options
 }
 
