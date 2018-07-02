@@ -23,6 +23,7 @@ func newOptions(opts ...Option) Options {
 		Registry:  *cmd.DefaultOptions().Registry,
 		Resolver: &defaultResolver{
 			namespace: "go.micro.api",
+			handler:   api.Default,
 		},
 	}
 
@@ -36,6 +37,12 @@ func newOptions(opts ...Option) Options {
 func WithHandler(h api.Handler) Option {
 	return func(o *Options) {
 		o.Handler = h
+
+		// set handler in default resolver
+		r, ok := o.Resolver.(*defaultResolver)
+		if ok {
+			r.handler = h
+		}
 	}
 }
 
