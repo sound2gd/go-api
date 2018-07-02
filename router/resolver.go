@@ -8,12 +8,12 @@ import (
 )
 
 // default resolver for legacy purposes
-type resolver struct {
+type defaultResolver struct {
 	namespace string
 	resolver  *vpath.Resolver
 }
 
-func (r *resolver) Resolve(req *http.Request) (string, error) {
+func (r *defaultResolver) Resolve(req *http.Request) (string, error) {
 	name, err := r.resolver.Resolve(req)
 	if err != nil {
 		return "", err
@@ -21,6 +21,6 @@ func (r *resolver) Resolve(req *http.Request) (string, error) {
 	return strings.Join([]string{r.namespace, name}, "."), nil
 }
 
-func (r *resolver) String() string {
+func (r *defaultResolver) String() string {
 	return "default"
 }

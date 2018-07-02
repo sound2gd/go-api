@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/micro/go-api"
+	"github.com/micro/go-api/resolver"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
 )
@@ -10,6 +11,7 @@ type Options struct {
 	Namespace string
 	Handler   api.Handler
 	Registry  registry.Registry
+	Resolver  resolver.Resolver
 }
 
 type Option func(o *Options)
@@ -43,5 +45,11 @@ func WithNamespace(ns string) Option {
 func WithRegistry(r registry.Registry) Option {
 	return func(o *Options) {
 		o.Registry = r
+	}
+}
+
+func WithResolver(r resolver.Resolver) Option {
+	return func(o *Options) {
+		o.Resolver = r
 	}
 }
