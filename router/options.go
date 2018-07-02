@@ -3,6 +3,7 @@ package router
 import (
 	"github.com/micro/go-api"
 	"github.com/micro/go-api/resolver"
+	"github.com/micro/go-api/resolver/vpath"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
 )
@@ -21,6 +22,10 @@ func newOptions(opts ...Option) Options {
 		Namespace: "go.micro.api",
 		Handler:   api.Default,
 		Registry:  *cmd.DefaultOptions().Registry,
+		Resolver: &defaultResolver{
+			namespace: "go.micro.api",
+			resolver:  &vpath.Resolver{},
+		},
 	}
 
 	for _, o := range opts {
@@ -39,6 +44,12 @@ func WithHandler(h api.Handler) Option {
 func WithNamespace(ns string) Option {
 	return func(o *Options) {
 		o.Namespace = ns
+
+		// set namespace in default resolver
+		r, ok := o.Resolver.(*defaultResolver)
+		if ok {
+			r.namespace = ns
+		}
 	}
 }
 
