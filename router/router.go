@@ -299,23 +299,41 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 		return nil, errors.New("router closed")
 	}
 
+	// try get an endpoint
+	ep, err := r.Endpoint(req)
+	if err == nil {
+		return ep, nil
+	}
+
+	// error not nil
+	// ignore that shit
+	// TODO: don't ignore that shit
+
+	// get the service name
+	name, err := r.opts.Resolver.Resolve(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// get service
+	services, err := r.rc.GetService(name)
+	if err != nil {
+		return nil, err
+	}
+
 	// only use endpoint matching when the meta handler is set aka api.Default
 	switch r.opts.Handler {
-	// meta handler
-	case api.Default:
-		// try get an endpoint from metadata
-		if ep, err := r.Endpoint(req); err == nil {
-			return ep, nil
-		}
+	// rpc handlers
+	case api.Default, api.Api, api.Rpc:
+		// get service method
+		_, method := apiRoute(r.opts.Namespace, req.URL.Path)
 
-		// no ep found, shit; default to api handler
+		// set handler
+		handler := r.opts.Handler
 
-		// get service route
-		name, method := apiRoute(r.opts.Namespace, req.URL.Path)
-		// get service
-		services, err := r.rc.GetService(name)
-		if err != nil {
-			return nil, err
+		// set default handler to api
+		if r.opts.Handler == api.Default {
+			handler = api.Api
 		}
 
 		// construct api service
@@ -323,19 +341,12 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 			Name: name,
 			Endpoint: &api.Endpoint{
 				Name:    method,
-				Handler: api.Api,
+				Handler: handler,
 			},
 			Services: services,
 		}, nil
 	// http handler
 	case api.Http, api.Proxy, api.Web:
-		// get proxy route
-		name := proxyRoute(r.opts.Namespace, req.URL.Path)
-		// get service
-		services, err := r.rc.GetService(name)
-		if err != nil {
-			return nil, err
-		}
 		// construct api service
 		return &api.Service{
 			Name: name,
@@ -345,24 +356,6 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 				Host:    []string{req.Host},
 				Method:  []string{req.Method},
 				Path:    []string{req.URL.Path},
-			},
-			Services: services,
-		}, nil
-	// go-micro service handler
-	case api.Api, api.Rpc:
-		// get service route
-		name, method := apiRoute(r.opts.Namespace, req.URL.Path)
-		// get service
-		services, err := r.rc.GetService(name)
-		if err != nil {
-			return nil, err
-		}
-		// construct api service
-		return &api.Service{
-			Name: name,
-			Endpoint: &api.Endpoint{
-				Name:    method,
-				Handler: r.opts.Handler,
 			},
 			Services: services,
 		}, nil
