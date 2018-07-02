@@ -1,5 +1,5 @@
 // Package vpath resolves using http path and recognised versioned urls
-package path
+package vpath
 
 import (
 	"errors"
