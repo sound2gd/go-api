@@ -2,14 +2,14 @@ package router
 
 import (
 	"net/http"
-
-	"github.com/micro/go-api/resolver/vpath"
 )
 
 // default resolver for legacy purposes
+// it uses proxy routing to resolve names
+// /foo becomes namespace.foo
+// /v1/foo becomes namespace.v1.foo
 type defaultResolver struct {
 	namespace string
-	resolver  *vpath.Resolver
 }
 
 func (r *defaultResolver) Resolve(req *http.Request) (string, error) {

@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/micro/go-api"
 	"github.com/micro/go-api/resolver"
-	"github.com/micro/go-api/resolver/vpath"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
 )
@@ -24,7 +23,6 @@ func newOptions(opts ...Option) Options {
 		Registry:  *cmd.DefaultOptions().Registry,
 		Resolver: &defaultResolver{
 			namespace: "go.micro.api",
-			resolver:  &vpath.Resolver{},
 		},
 	}
 
