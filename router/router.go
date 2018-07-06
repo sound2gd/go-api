@@ -310,13 +310,13 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	// TODO: don't ignore that shit
 
 	// get the service name
-	name, err := r.opts.Resolver.Resolve(req)
+	endp, err := r.opts.Resolver.Resolve(req)
 	if err != nil {
 		return nil, err
 	}
 
 	// get service
-	services, err := r.rc.GetService(name)
+	services, err := r.rc.GetService(endp.Name)
 	if err != nil {
 		return nil, err
 	}
@@ -338,7 +338,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 
 		// construct api service
 		return &api.Service{
-			Name: name,
+			Name: endp.Name,
 			Endpoint: &api.Endpoint{
 				Name:    method,
 				Handler: handler,
@@ -349,7 +349,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	case api.Http, api.Proxy, api.Web:
 		// construct api service
 		return &api.Service{
-			Name: name,
+			Name: endp.Name,
 			Endpoint: &api.Endpoint{
 				Name:    req.URL.String(),
 				Handler: r.opts.Handler,

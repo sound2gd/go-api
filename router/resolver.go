@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/micro/go-api"
+	"github.com/micro/go-api/resolver"
 )
 
 // default resolver for legacy purposes
@@ -15,15 +16,19 @@ type defaultResolver struct {
 	namespace string
 }
 
-func (r *defaultResolver) Resolve(req *http.Request) (string, error) {
+func (r *defaultResolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
+	var name string
+
 	switch r.handler {
 	case api.Default, api.Api, api.Rpc:
-		name, _ := apiRoute(r.namespace, req.URL.Path)
-		return name, nil
+		name, _ = apiRoute(r.namespace, req.URL.Path)
 	default:
-		name := proxyRoute(r.namespace, req.URL.Path)
-		return name, nil
+		name = proxyRoute(r.namespace, req.URL.Path)
 	}
+
+	return &resolver.Endpoint{
+		Name: name,
+	}, nil
 }
 
 func (r *defaultResolver) String() string {

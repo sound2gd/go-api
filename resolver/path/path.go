@@ -5,16 +5,20 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+
+	"github.com/micro/go-api/resolver"
 )
 
 type Resolver struct{}
 
-func (r *Resolver) Resolve(req *http.Request) (string, error) {
+func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	if req.URL.Path == "/" {
-		return "", errors.New("unknown name")
+		return nil, errors.New("unknown name")
 	}
 	parts := strings.Split(req.URL.Path[1:], "/")
-	return parts[0], nil
+	return &resolver.Endpoint{
+		Name: parts[0],
+	}, nil
 }
 
 func (r *Resolver) String() string {

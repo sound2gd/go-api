@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/micro/go-api/resolver"
 )
 
 type Resolver struct{}
@@ -14,23 +16,29 @@ var (
 	re = regexp.MustCompile("^v[0-9]+$")
 )
 
-func (r *Resolver) Resolve(req *http.Request) (string, error) {
+func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	if req.URL.Path == "/" {
-		return "", errors.New("unknown name")
+		return nil, errors.New("unknown name")
 	}
 
 	parts := strings.Split(req.URL.Path[1:], "/")
 
 	if len(parts) == 1 {
-		return parts[0], nil
+		return &resolver.Endpoint{
+			Name: parts[0],
+		}, nil
 	}
 
 	// /v1/foo
 	if re.MatchString(parts[0]) {
-		return parts[1], nil
+		return &resolver.Endpoint{
+			Name: parts[1],
+		}, nil
 	}
 
-	return parts[0], nil
+	return &resolver.Endpoint{
+		Name: parts[0],
+	}, nil
 }
 
 func (r *Resolver) String() string {
