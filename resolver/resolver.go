@@ -15,4 +15,10 @@ type Resolver interface {
 type Endpoint struct {
 	// e.g greeter
 	Name string
+	// HTTP Host e.g example.com
+	Host string
+	// HTTP Methods e.g GET, POST
+	Method string
+	// HTTP Path e.g /greeter.
+	Path string
 }

@@ -17,7 +17,10 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	}
 	parts := strings.Split(req.URL.Path[1:], "/")
 	return &resolver.Endpoint{
-		Name: parts[0],
+		Name:   parts[0],
+		Host:   req.Host,
+		Method: req.Method,
+		Path:   req.URL.Path,
 	}, nil
 }
 

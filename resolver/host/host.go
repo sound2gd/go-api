@@ -11,7 +11,10 @@ type Resolver struct{}
 
 func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	return &resolver.Endpoint{
-		Name: req.Host,
+		Name:   req.Host,
+		Host:   req.Host,
+		Method: req.Method,
+		Path:   req.URL.Path,
 	}, nil
 }
 

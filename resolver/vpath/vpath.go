@@ -25,19 +25,28 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 
 	if len(parts) == 1 {
 		return &resolver.Endpoint{
-			Name: parts[0],
+			Name:   parts[0],
+			Host:   req.Host,
+			Method: req.Method,
+			Path:   req.URL.Path,
 		}, nil
 	}
 
 	// /v1/foo
 	if re.MatchString(parts[0]) {
 		return &resolver.Endpoint{
-			Name: parts[1],
+			Name:   parts[1],
+			Host:   req.Host,
+			Method: req.Method,
+			Path:   req.URL.Path,
 		}, nil
 	}
 
 	return &resolver.Endpoint{
-		Name: parts[0],
+		Name:   parts[0],
+		Host:   req.Host,
+		Method: req.Method,
+		Path:   req.URL.Path,
 	}, nil
 }
 

@@ -22,7 +22,10 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	name := strings.Split(parts[0], ".")
 	// foo
 	return &resolver.Endpoint{
-		Name: strings.Join(name[:len(name)-1], "."),
+		Name:   strings.Join(name[:len(name)-1], "."),
+		Host:   req.Host,
+		Method: req.Method,
+		Path:   req.URL.Path,
 	}, nil
 }
 
