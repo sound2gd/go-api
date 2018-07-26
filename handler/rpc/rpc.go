@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/joncalhoun/qson"
 	"github.com/micro/go-api"
 	"github.com/micro/go-api/handler"
 	proto "github.com/micro/go-api/internal/proto"
@@ -58,7 +59,7 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// only allow post when we have the router
-	if h.opts.Router != nil && r.Method != "POST" {
+	if r.Method != "GET" && (h.opts.Router != nil && r.Method != "POST") {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
@@ -80,15 +81,18 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// response content type
 		w.Header().Set("Content-Type", "application/json")
 
-		// get request
-		br, err := ioutil.ReadAll(r.Body)
+		br, err := requestPayloadFromRequest(r)
 		if err != nil {
 			e := errors.InternalServerError("go.micro.api", err.Error())
 			http.Error(w, e.Error(), 500)
 			return
 		}
-		// use as raw json
-		request := json.RawMessage(br)
+
+		var request json.RawMessage
+		// if the extracted payload isn't empty lets use it
+		if len(br) > 0 {
+			request = json.RawMessage(br)
+		}
 
 		// create request/response
 		var response json.RawMessage
@@ -124,16 +128,19 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Length", strconv.Itoa(len(b)))
 		w.Write(b)
 	case "application/proto", "application/protobuf":
-		// get request
-		br, err := ioutil.ReadAll(r.Body)
+
+		br, err := requestPayloadFromRequest(r)
 		if err != nil {
 			e := errors.InternalServerError("go.micro.api", err.Error())
 			http.Error(w, e.Error(), 500)
 			return
 		}
 
-		// use as raw proto
-		request := proto.NewMessage(br)
+		request := &proto.Message{}
+		// if the extracted payload isn't empty lets use it
+		if len(br) > 0 {
+			request = proto.NewMessage(br)
+		}
 
 		// create request/response
 		response := &proto.Message{}
@@ -190,4 +197,20 @@ func WithService(s *api.Service, opts ...handler.Option) handler.Handler {
 		opts: options,
 		s:    s,
 	}
+}
+
+// requestPayloadFromRequest takes a *http.Request.
+// If the request is a GET the query string parameters are extracted and marshaled to JSON and the raw bytes are returned.
+// If the request method is a POST the request body is read and returned
+func requestPayloadFromRequest(r *http.Request) ([]byte, error) {
+	switch r.Method {
+	case "GET":
+		if len(r.URL.RawQuery) > 0 {
+			return qson.ToJSON(r.URL.RawQuery)
+		}
+	case "POST":
+		return ioutil.ReadAll(r.Body)
+	}
+
+	return []byte{}, nil
 }
