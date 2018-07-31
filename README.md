@@ -8,74 +8,11 @@ Note: This is a WIP
 
 ## Getting Started
 
-- [Handlers](#handlers) - The http handlers supported
-- [Endpoints](#endpoints) - Defining custom routes using endpoints
+- [Handler](handler) - Handlers are http handlers which understand backend protocols e.g rpc, http, web sockets
+- [Endpoint](#endpoint) - Endpoints are used to create dynamic routes managed by the router
+- [Router](router) - Router manages route mappings between endpoints and handlers
 
-## Handlers
-
-Handlers are HTTP handlers which provide a single entry point and act as a gateway to backend services. 
-Handlers manage dynamic routing from a http request to unique microservices.
-
-Current handlers implemented
-
-- [`api`](#api-handler) - Handles any HTTP request. Gives full control over the http request/response via RPC.
-- [`event`](#event-handler) -  Handles any HTTP request and publishes to a message bus.
-- [`http`](#http-handler) - Handles any HTTP request and forwards as a reverse proxy.
-- [`rpc`](#rpc-handler) - Handles json and protobuf POST requests. Forwards as RPC.
-- [`web`](#web-handler) - The HTTP handler with web socket support included.
-
-### API Handler
-
-The API handler is the default handler. It serves any HTTP requests and forwards on as an RPC request with a specific format.
-
-- Content-Type: Any
-- Body: Any
-- Forward Format: [api.Request](https://github.com/micro/go-api/blob/master/proto/api.proto#L11)/[api.Response](https://github.com/micro/go-api/blob/master/proto/api.proto#L21)
-- Path: `/[service]/[method]`
-- Resolver: Path is used to resolve service and method
-
-### Event Handler
-
-The event handler serves HTTP and forwards the request as a message over a message bus using the go-micro broker.
-
-- Content-Type: Any
-- Body: Any
-- Forward Format: Request is formatted as [go-api/proto.Event](https://github.com/micro/go-api/blob/master/proto/api.proto#L28L39) 
-- Path: `/[topic]/[event]`
-- Resolver: Path is used to resolve topic and event name
-
-### HTTP Handler
-
-The http handler is a http reserve proxy with built in service discovery.
-
-- Content-Type: Any
-- Body: Any
-- Forward Format: HTTP Reverse proxy
-- Path: `/[service]`
-- Resolver: Path is used to resolve service name
-
-### RPC Handler
-
-The RPC handler serves json or protobuf HTTP POST requests and forwards as an RPC request.
-
-- Content-Type: `application/json` or `application/protobuf`
-- Body: JSON or Protobuf
-- Forward Format: json-rpc or proto-rpc based on content
-- Path: `/[service]/[method]`
-- Resolver: Path is used to resolve service and method
-
-### Web Handler
-
-The web handler is a http reserve proxy with built in service discovery and web socket support.
-
-- Content-Type: Any
-- Body: Any
-- Forward Format: HTTP Reverse proxy including web sockets
-- Path: `/[service]`
-- Resolver: Path is used to resolve service name
-
-
-## Endpoints
+## Endpoint
 
 Endpoints allow a service to dynamically configure the micro api handler
 
