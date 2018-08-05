@@ -324,7 +324,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	// only use endpoint matching when the meta handler is set aka api.Default
 	switch r.opts.Handler {
 	// rpc handlers
-	case api.Default, api.Api, api.Rpc:
+	case "meta", "api", "rpc":
 		// get service method
 		_, method := apiRoute(r.opts.Namespace, req.URL.Path)
 
@@ -332,8 +332,8 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 		handler := r.opts.Handler
 
 		// set default handler to api
-		if r.opts.Handler == api.Default {
-			handler = api.Api
+		if r.opts.Handler == "meta" {
+			handler = "api"
 		}
 
 		// construct api service
@@ -346,7 +346,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 			Services: services,
 		}, nil
 	// http handler
-	case api.Http, api.Proxy, api.Web:
+	case "http", "proxy", "web":
 		// construct api service
 		return &api.Service{
 			Name: endp.Name,

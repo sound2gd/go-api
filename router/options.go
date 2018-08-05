@@ -1,7 +1,6 @@
 package router
 
 import (
-	"github.com/micro/go-api"
 	"github.com/micro/go-api/resolver"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
@@ -9,7 +8,7 @@ import (
 
 type Options struct {
 	Namespace string
-	Handler   api.Handler
+	Handler   string
 	Registry  registry.Registry
 	Resolver  resolver.Resolver
 }
@@ -19,11 +18,11 @@ type Option func(o *Options)
 func newOptions(opts ...Option) Options {
 	options := Options{
 		Namespace: "go.micro.api",
-		Handler:   api.Default,
+		Handler:   "meta",
 		Registry:  *cmd.DefaultOptions().Registry,
 		Resolver: &defaultResolver{
 			namespace: "go.micro.api",
-			handler:   api.Default,
+			handler:   "meta",
 		},
 	}
 
@@ -34,7 +33,7 @@ func newOptions(opts ...Option) Options {
 	return options
 }
 
-func WithHandler(h api.Handler) Option {
+func WithHandler(h string) Option {
 	return func(o *Options) {
 		o.Handler = h
 

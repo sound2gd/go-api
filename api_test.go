@@ -11,7 +11,7 @@ func TestEncoding(t *testing.T) {
 		{
 			Name:        "Foo.Bar",
 			Description: "A test endpoint",
-			Handler:     Default,
+			Handler:     "meta",
 			Host:        []string{"foo.com"},
 			Method:      []string{"GET"},
 			Path:        []string{"/test"},
@@ -70,7 +70,7 @@ func TestEncoding(t *testing.T) {
 		method := strings.Split(e["method"], ",")
 		path := strings.Split(e["path"], ",")
 		host := strings.Split(e["host"], ",")
-		handler := Handler(e["handler"])
+		handler := e["handler"]
 
 		if name != d.Name {
 			t.Fatalf("expected %v got %v", d.Name, name)

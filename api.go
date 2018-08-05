@@ -9,26 +9,6 @@ import (
 	"github.com/micro/go-micro/server"
 )
 
-const (
-	// Default defines the default handler
-	Default Handler = "meta"
-	// serves api.Request and api.Response
-	Api Handler = "api"
-	// serves the async api.Event handler
-	Event Handler = "event"
-	// forwards as http request
-	Http Handler = "http"
-	// proxies a http request
-	Proxy Handler = "proxy"
-	// services an RPC request/response
-	Rpc Handler = "rpc"
-	// serves the web proxy handler
-	Web Handler = "web"
-)
-
-// Handler defines the type of handler uses by the micro api
-type Handler string
-
 // Endpoint is a mapping between an RPC method and HTTP endpoint
 type Endpoint struct {
 	// RPC Method e.g. Greeter.Hello
@@ -36,7 +16,7 @@ type Endpoint struct {
 	// Description e.g what's this endpoint for
 	Description string
 	// API Handler e.g rpc, proxy
-	Handler Handler
+	Handler string
 	// HTTP Host e.g example.com
 	Host []string
 	// HTTP Methods e.g GET, POST
@@ -83,7 +63,7 @@ func Encode(e *Endpoint) map[string]string {
 		"method":      strings.Join(e.Method, ","),
 		"path":        strings.Join(e.Path, ","),
 		"host":        strings.Join(e.Host, ","),
-		"handler":     string(e.Handler),
+		"handler":     e.Handler,
 	}
 }
 
@@ -99,7 +79,7 @@ func Decode(e map[string]string) *Endpoint {
 		Method:      slice(e["method"]),
 		Path:        slice(e["path"]),
 		Host:        slice(e["host"]),
-		Handler:     Handler(e["handler"]),
+		Handler:     e["handler"],
 	}
 }
 
@@ -120,11 +100,7 @@ func Validate(e *Endpoint) error {
 		}
 	}
 
-	switch e.Handler {
-	// only match these handlers
-	case Api, Event, Http, Proxy, Rpc, Web:
-		// valid
-	default:
+	if len(e.Handler) == 0 {
 		return errors.New("invalid handler")
 	}
 

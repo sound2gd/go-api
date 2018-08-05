@@ -8,7 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/micro/go-api"
 	"github.com/micro/go-api/handler"
 	"github.com/micro/go-api/router"
 	"github.com/micro/go-micro/cmd"
@@ -65,7 +64,7 @@ func testHttp(t *testing.T, path, service string) {
 	}
 
 	// initialise the handler
-	rt := router.NewRouter(router.WithHandler(api.Http))
+	rt := router.NewRouter(router.WithHandler("http"))
 
 	p := NewHandler(handler.WithRouter(rt))
 
