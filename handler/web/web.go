@@ -16,6 +16,10 @@ import (
 	"github.com/micro/go-micro/selector"
 )
 
+const (
+	Handler = "web"
+)
+
 type webHandler struct {
 	opts handler.Options
 	s    *api.Service

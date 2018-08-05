@@ -56,7 +56,7 @@ proto.RegisterGreeterHandler(service.Server(), new(Greeter), api.WithEndpoint(&a
 	// The HTTP Methods for this endpoint
 	Method: []string{"GET", "POST"},
 	// The API handler to use
-	Handler: api.Rpc,
+	Handler: rpc.Handler,
 })
 
 // Run it as usual

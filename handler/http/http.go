@@ -12,6 +12,10 @@ import (
 	"github.com/micro/go-micro/selector"
 )
 
+const (
+	Handler = "http"
+)
+
 type httpHandler struct {
 	options handler.Options
 

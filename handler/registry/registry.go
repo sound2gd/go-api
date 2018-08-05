@@ -13,6 +13,8 @@ import (
 )
 
 const (
+	Handler = "registry"
+
 	pingTime      = (readDeadline * 9) / 10
 	readLimit     = 16384
 	readDeadline  = 60 * time.Second

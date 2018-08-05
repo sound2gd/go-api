@@ -18,6 +18,10 @@ import (
 	"github.com/micro/util/go/lib/ctx"
 )
 
+const (
+	Handler = "rpc"
+)
+
 type rpcHandler struct {
 	opts handler.Options
 	s    *api.Service

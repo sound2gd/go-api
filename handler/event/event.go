@@ -20,6 +20,7 @@ type event struct {
 }
 
 var (
+	Handler   = "event"
 	versionRe = regexp.MustCompilePOSIX("^v[0-9]+$")
 )
 

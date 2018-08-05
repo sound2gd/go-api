@@ -17,6 +17,10 @@ type apiHandler struct {
 	s    *goapi.Service
 }
 
+const (
+	Handler = "api"
+)
+
 // API handler is the default handler which takes api.Request and returns api.Response
 func (a *apiHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	request, err := requestToProto(r)

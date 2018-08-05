@@ -15,6 +15,7 @@ type event struct {
 }
 
 var (
+	Handler   = "cloudevents"
 	versionRe = regexp.MustCompilePOSIX("^v[0-9]+$")
 )
 
