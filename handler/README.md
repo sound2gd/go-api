@@ -4,6 +4,7 @@ Handler is the interface for handling requests. It defaults to a `http.Handler` 
 
 - [`api`](#api-handler) - Handles any HTTP request. Gives full control over the http request/response via RPC.
 - [`broker`](#broker-handler) - A http handler which implements the go-micro broker interface
+- [`cloudevents`](#cloudevents-handler) -  Handles CloudEvents and publishes to a message bus.
 - [`event`](#event-handler) -  Handles any HTTP request and publishes to a message bus.
 - [`http`](#http-handler) - Handles any HTTP request and forwards as a reverse proxy.
 - [`registry`](#registry-handler) - A http handler which implements the go-micro registry interface
@@ -32,9 +33,19 @@ The broker handler is a http handler which serves the go-micro broker interface
 
 Post the request and it will be published
 
+## CloudEvents Handler
+
+The CloudEvents handler serves HTTP and forwards the request as a CloudEvents message over a message bus using the go-micro/client.Publish method.
+
+- Content-Type: Any
+- Body: Any
+- Forward Format: Request is formatted as [CloudEvents](https://github.com/cloudevents/spec) message
+- Path: `/[topic]`
+- Resolver: Path is used to resolve topic
+
 ## Event Handler
 
-The event handler serves HTTP and forwards the request as a message over a message bus using the go-micro broker.
+The event handler serves HTTP and forwards the request as a message over a message bus using the go-micro/client.Publish method.
 
 - Content-Type: Any
 - Body: Any
