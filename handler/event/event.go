@@ -1,3 +1,4 @@
+// Package event provides a handler which publishes an event
 package event
 
 import (

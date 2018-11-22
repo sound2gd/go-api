@@ -1,3 +1,4 @@
+// Package registry is a go-micro/registry handler
 package registry
 
 import (

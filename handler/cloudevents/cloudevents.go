@@ -1,3 +1,4 @@
+// Package cloudevents provides a cloudevents handler publishing the event using the go-micro/client
 package cloudevents
 
 import (

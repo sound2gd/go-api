@@ -1,3 +1,4 @@
+// Package api provides an http-rpc handler which provides the entire http request over rpc
 package api
 
 import (

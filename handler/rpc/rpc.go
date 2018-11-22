@@ -1,3 +1,4 @@
+// Package rpc is a go-micro rpc handler.
 package rpc
 
 import (

@@ -1,3 +1,4 @@
+// Package broker provides a go-micro/broker handler
 package broker
 
 import (
