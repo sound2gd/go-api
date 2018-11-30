@@ -22,3 +22,10 @@ type Endpoint struct {
 	// HTTP Path e.g /greeter.
 	Path string
 }
+
+type Options struct {
+	Handler   string
+	Namespace string
+}
+
+type Option func(o *Options)

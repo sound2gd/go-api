@@ -1,4 +1,4 @@
-package router
+package micro
 
 import (
 	"path"
@@ -18,28 +18,33 @@ func apiRoute(ns, p string) (string, string) {
 	p = strings.TrimPrefix(p, "/")
 	parts := strings.Split(p, "/")
 
+	// join namespace and service name
+	join := func(ns, name string) string {
+		if len(ns) == 0 {
+			return name
+		}
+		return strings.Join([]string{ns, name}, ".")
+	}
+
 	// If we've got two or less parts
 	// Use first part as service
 	// Use all parts as method
 	if len(parts) <= 2 {
-		service := ns + "." + strings.Join(parts[:len(parts)-1], ".")
-		method := methodName(parts)
-		return service, method
+		name := strings.Join(parts[:len(parts)-1], ".")
+		return join(ns, name), methodName(parts)
 	}
 
 	// Treat /v[0-9]+ as versioning where we have 3 parts
 	// /v1/foo/bar => service: v1.foo method: Foo.bar
 	if len(parts) == 3 && versionRe.Match([]byte(parts[0])) {
-		service := ns + "." + strings.Join(parts[:len(parts)-1], ".")
-		method := methodName(parts[len(parts)-2:])
-		return service, method
+		name := strings.Join(parts[:len(parts)-1], ".")
+		return join(ns, name), methodName(parts[len(parts)-2:])
 	}
 
 	// Service is everything minus last two parts
 	// Method is the last two parts
-	service := ns + "." + strings.Join(parts[:len(parts)-2], ".")
-	method := methodName(parts[len(parts)-2:])
-	return service, method
+	name := strings.Join(parts[:len(parts)-2], ".")
+	return join(ns, name), methodName(parts[len(parts)-2:])
 }
 
 func proxyRoute(ns string, p string) string {
@@ -72,7 +77,12 @@ func proxyRoute(ns string, p string) string {
 		return ""
 	}
 
-	return ns + "." + service
+	// no namespace
+	if len(ns) == 0 {
+		return service
+	}
+
+	return strings.Join([]string{ns, service}, ".")
 }
 
 func methodName(parts []string) string {

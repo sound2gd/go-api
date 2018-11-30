@@ -325,22 +325,18 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	switch r.opts.Handler {
 	// rpc handlers
 	case "meta", "api", "rpc":
-		// get service method
-		_, method := apiRoute(r.opts.Namespace, req.URL.Path)
-
-		// set handler
 		handler := r.opts.Handler
 
 		// set default handler to api
 		if r.opts.Handler == "meta" {
-			handler = "api"
+			handler = "rpc"
 		}
 
 		// construct api service
 		return &api.Service{
 			Name: endp.Name,
 			Endpoint: &api.Endpoint{
-				Name:    method,
+				Name:    endp.Method,
 				Handler: handler,
 			},
 			Services: services,
