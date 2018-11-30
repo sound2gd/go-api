@@ -21,3 +21,7 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 func (r *Resolver) String() string {
 	return "host"
 }
+
+func NewResolver(opts ...resolver.Option) resolver.Resolver {
+	return &Resolver{}
+}

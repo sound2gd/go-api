@@ -53,3 +53,7 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 func (r *Resolver) String() string {
 	return "path"
 }
+
+func NewResolver(opts ...resolver.Option) resolver.Resolver {
+	return &Resolver{}
+}

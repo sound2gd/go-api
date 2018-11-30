@@ -20,6 +20,7 @@ func apiRoute(ns, p string) (string, string) {
 
 	// join namespace and service name
 	join := func(ns, name string) string {
+		ns = strings.TrimSpace(ns)
 		if len(ns) == 0 {
 			return name
 		}
@@ -78,6 +79,7 @@ func proxyRoute(ns string, p string) string {
 	}
 
 	// no namespace
+	ns = strings.TrimSpace(ns)
 	if len(ns) == 0 {
 		return service
 	}

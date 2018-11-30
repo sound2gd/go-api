@@ -1,4 +1,4 @@
-// Package grpc resolves using http path
+// Package grpc resolves a grpc service like /greeter.Say/Hello to greeter service
 package grpc
 
 import (
@@ -31,4 +31,8 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 
 func (r *Resolver) String() string {
 	return "grpc"
+}
+
+func NewResolver(opts ...resolver.Option) resolver.Resolver {
+	return &Resolver{}
 }
