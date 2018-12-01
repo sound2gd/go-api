@@ -107,6 +107,29 @@ func Validate(e *Endpoint) error {
 	return nil
 }
 
+/*
+Design ideas
+
+// Api is an api gateway interface
+type Api interface {
+	// Register a http handler
+	Handle(pattern string, http.Handler)
+	// Register a route
+	Route(r Endpoint)
+	// Init initialises options
+	Init(...Option) error
+	// Api options
+	Options() Options
+	// Run the api
+	Run() error
+}
+
+// NewAPI returns a new api gateway
+func NewAPI() Api {
+	return newApi()
+}
+*/
+
 // WithEndpoint returns a server.HandlerOption with endpoint metadata set
 // usage:
 // proto.Register(server, handler, api.WithEndpoint(&Endpoint{Name: "Greeter.Hello", Path: []string{"/greeter"}}))
