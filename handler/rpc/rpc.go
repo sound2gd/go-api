@@ -213,7 +213,7 @@ func requestPayloadFromRequest(r *http.Request) ([]byte, error) {
 		if len(r.URL.RawQuery) > 0 {
 			return qson.ToJSON(r.URL.RawQuery)
 		}
-	case "POST":
+	case "PATCH", "POST":
 		return ioutil.ReadAll(r.Body)
 	}
 
