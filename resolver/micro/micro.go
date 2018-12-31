@@ -47,8 +47,8 @@ func (r *Resolver) String() string {
 }
 
 // NewResolver creates a new micro resolver
-func NewResolver(Options ...resolver.Option) resolver.Resolver {
+func NewResolver(opts ...resolver.Option) resolver.Resolver {
 	return &Resolver{
-		Options: resolver.NewOptions(Options...),
+		Options: resolver.NewOptions(opts...),
 	}
 }
