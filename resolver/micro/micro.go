@@ -11,11 +11,11 @@ import (
 // it uses proxy routing to resolve names
 // /foo becomes namespace.foo
 // /v1/foo becomes namespace.v1.foo
-type microResolver struct {
-	opts resolver.Options
+type Resolver struct {
+	Options resolver.Options
 }
 
-func (r *microResolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
+func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	name := req.Header.Get("X-Micro-Target")
 	method := req.Header.Get("X-Micro-Method")
 
@@ -27,13 +27,13 @@ func (r *microResolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 		}, nil
 	}
 
-	switch r.opts.Handler {
+	switch r.Options.Handler {
 	// internal handlers
 	case "meta", "api", "rpc", "micro":
-		name, method = apiRoute(r.opts.Namespace, req.URL.Path)
+		name, method = apiRoute(r.Options.Namespace, req.URL.Path)
 	default:
 		method = req.Method
-		name = proxyRoute(r.opts.Namespace, req.URL.Path)
+		name = proxyRoute(r.Options.Namespace, req.URL.Path)
 	}
 
 	return &resolver.Endpoint{
@@ -42,13 +42,13 @@ func (r *microResolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	}, nil
 }
 
-func (r *microResolver) String() string {
+func (r *Resolver) String() string {
 	return "micro"
 }
 
 // NewResolver creates a new micro resolver
-func NewResolver(opts ...resolver.Option) resolver.Resolver {
-	return &microResolver{
-		opts: resolver.NewOptions(opts...),
+func NewResolver(Options ...resolver.Option) resolver.Resolver {
+	return &Resolver{
+		Options: resolver.NewOptions(Options...),
 	}
 }
