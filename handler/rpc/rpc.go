@@ -1,5 +1,5 @@
-// Package micro is a go-micro rpc handler.
-package micro
+// Package rpc is a go-micro rpc handler.
+package rpc
 
 import (
 	"encoding/json"
@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	Handler = "micro"
+	Handler = "rpc"
 )
 
 var (
@@ -181,7 +181,7 @@ func (h *rpcHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rh *rpcHandler) String() string {
-	return "micro"
+	return "rpc"
 }
 
 func hasCodec(ct string, codecs []string) bool {
