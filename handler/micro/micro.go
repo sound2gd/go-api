@@ -1,5 +1,5 @@
-// Package rpc is a go-micro rpc handler.
-package rpc
+// Package micro is a go-micro rpc handler.
+package micro
 
 import (
 	"encoding/json"
