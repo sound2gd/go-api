@@ -16,16 +16,7 @@ type Resolver struct {
 }
 
 func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
-	name := req.Header.Get("X-Micro-Target")
-	method := req.Header.Get("X-Micro-Method")
-
-	// internal micro client request
-	if len(name) > 0 && len(method) > 0 {
-		return &resolver.Endpoint{
-			Name:   name,
-			Method: method,
-		}, nil
-	}
+	var name, method string
 
 	switch r.Options.Handler {
 	// internal handlers
