@@ -42,6 +42,7 @@ var (
 		"application/proto",
 		"application/protobuf",
 		"application/proto-rpc",
+		"application/octet-stream",
 	}
 )
 
@@ -214,7 +215,7 @@ func requestPayload(r *http.Request) ([]byte, error) {
 			return nil, err
 		}
 		return ([]byte)(raw), nil
-	case "application/proto-rpc":
+	case "application/proto-rpc", "application/octet-stream":
 		msg := codec.Message{
 			Type:   codec.Request,
 			Header: make(map[string]string),
