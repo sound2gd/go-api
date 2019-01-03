@@ -33,7 +33,7 @@ func TestRequestPayloadFromRequest(t *testing.T) {
 			t.Fatalf("Failed to created http.Request: %v", err)
 		}
 
-		extByte, err := requestPayloadFromRequest(r)
+		extByte, err := requestPayload(r)
 		if err != nil {
 			t.Fatalf("Failed to extract payload from request: %v", err)
 		}
@@ -48,7 +48,7 @@ func TestRequestPayloadFromRequest(t *testing.T) {
 			t.Fatalf("Failed to created http.Request: %v", err)
 		}
 
-		extByte, err := requestPayloadFromRequest(r)
+		extByte, err := requestPayload(r)
 		if err != nil {
 			t.Fatalf("Failed to extract payload from request: %v", err)
 		}
@@ -68,7 +68,7 @@ func TestRequestPayloadFromRequest(t *testing.T) {
 		q.Add("name", "Test")
 		r.URL.RawQuery = q.Encode()
 
-		extByte, err := requestPayloadFromRequest(r)
+		extByte, err := requestPayload(r)
 		if err != nil {
 			t.Fatalf("Failed to extract payload from request: %v", err)
 		}
@@ -84,7 +84,7 @@ func TestRequestPayloadFromRequest(t *testing.T) {
 			t.Fatalf("Failed to created http.Request: %v", err)
 		}
 
-		extByte, err := requestPayloadFromRequest(r)
+		extByte, err := requestPayload(r)
 		if err != nil {
 			t.Fatalf("Failed to extract payload from request: %v", err)
 		}
