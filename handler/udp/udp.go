@@ -2,11 +2,9 @@
 package udp
 
 import (
-	"fmt"
 	"io"
 	"net"
 	"net/http"
-	"path/filepath"
 )
 
 type Handler struct{}
