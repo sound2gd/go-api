@@ -14,5 +14,5 @@ Go API is the basis for the [micro api](https://micro.mu/docs/api.html).
 
 ## Getting Started
 
-See the [docs]() to learn more
+See the [docs](https://micro.mu/docs/go-api.html) to learn more
 
