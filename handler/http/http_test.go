@@ -12,11 +12,11 @@ import (
 	"github.com/micro/go-api/router"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
-	rmock "github.com/micro/go-micro/registry/mock"
+	"github.com/micro/go-micro/registry/memory"
 )
 
 func testHttp(t *testing.T, path, service string) {
-	r := rmock.NewRegistry()
+	r := memory.NewRegistry()
 	cmd.DefaultCmd = cmd.NewCmd(cmd.Registry(&r))
 
 	l, err := net.Listen("tcp", "127.0.0.1:0")
