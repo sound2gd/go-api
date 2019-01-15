@@ -110,29 +110,35 @@ func Validate(e *Endpoint) error {
 /*
 Design ideas
 
-// Api is an api gateway interface
-type Api interface {
+// Gateway is an api gateway interface
+type Gateway interface {
 	// Register a http handler
 	Handle(pattern string, http.Handler)
 	// Register a route
-	Route(r Endpoint)
-	// Init initialises options
+	RegisterRoute(r Route)
+	// Init initialises the command line. 
+	// It also parses further options.
 	Init(...Option) error
-	// Api options
-	Options() Options
-	// Run the api
+	// Run the gateway
 	Run() error
 }
 
-// NewAPI returns a new api gateway
-func NewAPI() Api {
-	return newApi()
+// NewGateway returns a new api gateway
+func NewGateway() Gateway {
+	return newGateway()
 }
 */
 
 // WithEndpoint returns a server.HandlerOption with endpoint metadata set
-// usage:
-// proto.Register(server, handler, api.WithEndpoint(&Endpoint{Name: "Greeter.Hello", Path: []string{"/greeter"}}))
+//
+// Usage:
+//
+// 	proto.RegisterHandler(service.Server(), new(Handler), api.WithEndpoint(
+//		&api.Endpoint{
+//			Name: "Greeter.Hello",
+//			Path: []string{"/greeter"},
+//		},
+//	))
 func WithEndpoint(e *Endpoint) server.HandlerOption {
 	return server.EndpointMetadata(e.Name, Encode(e))
 }
