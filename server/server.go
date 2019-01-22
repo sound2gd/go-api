@@ -74,7 +74,7 @@ func (s *server) Start() error {
 		return err
 	}
 
-	log.Logf("Listening on %s", l.Addr().String())
+	log.Logf("HTTP API Listening on %s", l.Addr().String())
 
 	s.mtx.Lock()
 	s.address = l.Addr().String()

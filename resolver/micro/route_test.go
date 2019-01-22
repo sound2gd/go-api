@@ -5,8 +5,6 @@ import (
 )
 
 func TestApiRoute(t *testing.T) {
-	namespace := "go.micro.api"
-
 	testData := []struct {
 		path    string
 		service string
@@ -14,60 +12,60 @@ func TestApiRoute(t *testing.T) {
 	}{
 		{
 			"/foo/bar",
-			namespace + ".foo",
+			"foo",
 			"Foo.Bar",
 		},
 		{
 			"/foo/foo/bar",
-			namespace + ".foo",
+			"foo",
 			"Foo.Bar",
 		},
 		{
 			"/foo/bar/baz",
-			namespace + ".foo",
+			"foo",
 			"Bar.Baz",
 		},
 		{
 			"/foo/bar/baz-xyz",
-			namespace + ".foo",
+			"foo",
 			"Bar.BazXyz",
 		},
 		{
 			"/foo/bar/baz/cat",
-			namespace + ".foo.bar",
+			"foo.bar",
 			"Baz.Cat",
 		},
 		{
 			"/foo/bar/baz/cat/car",
-			namespace + ".foo.bar.baz",
+			"foo.bar.baz",
 			"Cat.Car",
 		},
 		{
 			"/foo/fooBar/bazCat",
-			namespace + ".foo",
+			"foo",
 			"FooBar.BazCat",
 		},
 		{
 			"/v1/foo/bar",
-			namespace + ".v1.foo",
+			"v1.foo",
 			"Foo.Bar",
 		},
 		{
 			"/v1/foo/bar/baz",
-			namespace + ".v1.foo",
+			"v1.foo",
 			"Bar.Baz",
 		},
 		{
 			"/v1/foo/bar/baz/cat",
-			namespace + ".v1.foo.bar",
+			"v1.foo.bar",
 			"Baz.Cat",
 		},
 	}
 
 	for _, d := range testData {
-		s, m := apiRoute(namespace, d.path)
+		s, m := apiRoute(d.path)
 		if d.service != s {
-			t.Fatalf("Expected service: %s for path: %s got: %s", d.service, d.path, s)
+			t.Fatalf("Expected service: %s for path: %s got: %s %s", d.service, d.path, s, m)
 		}
 		if d.method != m {
 			t.Fatalf("Expected service: %s for path: %s got: %s", d.method, d.path, m)
@@ -76,52 +74,55 @@ func TestApiRoute(t *testing.T) {
 }
 
 func TestProxyRoute(t *testing.T) {
-	namespace := "go.micro.api"
-
 	testData := []struct {
 		path    string
 		service string
 	}{
+		// no namespace
 		{
 			"/f",
-			namespace + ".f",
+			"f",
+		},
+		{
+			"/f",
+			"f",
 		},
 		{
 			"/f-b",
-			namespace + ".f-b",
+			"f-b",
 		},
 		{
 			"/foo/bar",
-			namespace + ".foo",
+			"foo",
 		},
 		{
 			"/foo-bar",
-			namespace + ".foo-bar",
+			"foo-bar",
 		},
 		{
 			"/foo-bar-baz",
-			namespace + ".foo-bar-baz",
+			"foo-bar-baz",
 		},
 		{
 			"/foo/bar/bar",
-			namespace + ".foo",
+			"foo",
 		},
 		{
 			"/v1/foo/bar",
-			namespace + ".v1.foo",
+			"v1.foo",
 		},
 		{
 			"/v1/foo/bar/baz",
-			namespace + ".v1.foo",
+			"v1.foo",
 		},
 		{
 			"/v1/foo/bar/baz/cat",
-			namespace + ".v1.foo",
+			"v1.foo",
 		},
 	}
 
 	for _, d := range testData {
-		s := proxyRoute(namespace, d.path)
+		s := proxyRoute(d.path)
 		if d.service != s {
 			t.Fatalf("Expected service: %s for path: %s got: %s", d.service, d.path, s)
 		}

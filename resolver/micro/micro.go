@@ -21,10 +21,10 @@ func (r *Resolver) Resolve(req *http.Request) (*resolver.Endpoint, error) {
 	switch r.Options.Handler {
 	// internal handlers
 	case "meta", "api", "rpc", "micro":
-		name, method = apiRoute(r.Options.Namespace, req.URL.Path)
+		name, method = apiRoute(req.URL.Path)
 	default:
 		method = req.Method
-		name = proxyRoute(r.Options.Namespace, req.URL.Path)
+		name = proxyRoute(req.URL.Path)
 	}
 
 	return &resolver.Endpoint{

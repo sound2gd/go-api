@@ -40,6 +40,28 @@ type router struct {
 	eps map[string]*api.Service
 }
 
+func setNamespace(ns, name string) string {
+	ns = strings.TrimSpace(ns)
+	name = strings.TrimSpace(name)
+
+	// no namespace
+	if len(ns) == 0 {
+		return name
+	}
+
+	switch {
+	// has - suffix
+	case strings.HasSuffix(ns, "-"):
+		return strings.Replace(ns+name, ".", "-", -1)
+	// has . suffix
+	case strings.HasSuffix(ns, "."):
+		return ns + name
+	}
+
+	// default join .
+	return strings.Join([]string{ns, name}, ".")
+}
+
 func (r *router) isClosed() bool {
 	select {
 	case <-r.exit:
@@ -310,13 +332,16 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	// TODO: don't ignore that shit
 
 	// get the service name
-	endp, err := r.opts.Resolver.Resolve(req)
+	rp, err := r.opts.Resolver.Resolve(req)
 	if err != nil {
 		return nil, err
 	}
 
+	// service name
+	name := setNamespace(r.opts.Namespace, rp.Name)
+
 	// get service
-	services, err := r.rc.GetService(endp.Name)
+	services, err := r.rc.GetService(name)
 	if err != nil {
 		return nil, err
 	}
@@ -334,9 +359,9 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 
 		// construct api service
 		return &api.Service{
-			Name: endp.Name,
+			Name: rp.Name,
 			Endpoint: &api.Endpoint{
-				Name:    endp.Method,
+				Name:    rp.Method,
 				Handler: handler,
 			},
 			Services: services,
@@ -345,7 +370,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	case "http", "proxy", "web":
 		// construct api service
 		return &api.Service{
-			Name: endp.Name,
+			Name: rp.Name,
 			Endpoint: &api.Endpoint{
 				Name:    req.URL.String(),
 				Handler: r.opts.Handler,

@@ -15,7 +15,7 @@ import (
 	"github.com/micro/go-micro/registry/memory"
 )
 
-func testHttp(t *testing.T, path, service string) {
+func testHttp(t *testing.T, path, service, ns string) {
 	r := memory.NewRegistry()
 	cmd.DefaultCmd = cmd.NewCmd(cmd.Registry(&r))
 
@@ -64,7 +64,10 @@ func testHttp(t *testing.T, path, service string) {
 	}
 
 	// initialise the handler
-	rt := router.NewRouter(router.WithHandler("http"))
+	rt := router.NewRouter(
+		router.WithHandler("http"),
+		router.WithNamespace(ns),
+	)
 
 	p := NewHandler(handler.WithRouter(rt))
 
@@ -82,36 +85,48 @@ func testHttp(t *testing.T, path, service string) {
 
 func TestHttpHandler(t *testing.T) {
 	testData := []struct {
-		path    string
-		service string
+		path      string
+		service   string
+		namespace string
 	}{
 		{
 			"/test/foo",
 			"go.micro.api.test",
+			"go.micro.api",
 		},
 		{
 			"/test/foo/baz",
 			"go.micro.api.test",
+			"go.micro.api",
 		},
 		{
 			"/v1/foo",
 			"go.micro.api.v1.foo",
+			"go.micro.api",
 		},
 		{
 			"/v1/foo/bar",
 			"go.micro.api.v1.foo",
+			"go.micro.api",
 		},
 		{
 			"/v2/baz",
 			"go.micro.api.v2.baz",
+			"go.micro.api",
 		},
 		{
 			"/v2/baz/bar",
 			"go.micro.api.v2.baz",
+			"go.micro.api",
+		},
+		{
+			"/v2/baz/bar",
+			"v2.baz",
+			"",
 		},
 	}
 
 	for _, d := range testData {
-		testHttp(t, d.path, d.service)
+		testHttp(t, d.path, d.service, d.namespace)
 	}
 }
