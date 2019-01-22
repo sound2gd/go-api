@@ -13,42 +13,33 @@ var (
 
 // Translates /foo/bar/zool into api service go.micro.api.foo method Bar.Zool
 // Translates /foo/bar into api service go.micro.api.foo method Foo.Bar
-func apiRoute(ns, p string) (string, string) {
+func apiRoute(p string) (string, string) {
 	p = path.Clean(p)
 	p = strings.TrimPrefix(p, "/")
 	parts := strings.Split(p, "/")
-
-	// join namespace and service name
-	join := func(ns, name string) string {
-		ns = strings.TrimSpace(ns)
-		if len(ns) == 0 {
-			return name
-		}
-		return strings.Join([]string{ns, name}, ".")
-	}
 
 	// If we've got two or less parts
 	// Use first part as service
 	// Use all parts as method
 	if len(parts) <= 2 {
-		name := strings.Join(parts[:len(parts)-1], ".")
-		return join(ns, name), methodName(parts)
+		name := parts[0]
+		return name, methodName(parts)
 	}
 
 	// Treat /v[0-9]+ as versioning where we have 3 parts
 	// /v1/foo/bar => service: v1.foo method: Foo.bar
 	if len(parts) == 3 && versionRe.Match([]byte(parts[0])) {
 		name := strings.Join(parts[:len(parts)-1], ".")
-		return join(ns, name), methodName(parts[len(parts)-2:])
+		return name, methodName(parts[len(parts)-2:])
 	}
 
 	// Service is everything minus last two parts
 	// Method is the last two parts
 	name := strings.Join(parts[:len(parts)-2], ".")
-	return join(ns, name), methodName(parts[len(parts)-2:])
+	return name, methodName(parts[len(parts)-2:])
 }
 
-func proxyRoute(ns string, p string) string {
+func proxyRoute(p string) string {
 	parts := strings.Split(p, "/")
 	if len(parts) < 2 {
 		return ""
@@ -78,13 +69,7 @@ func proxyRoute(ns string, p string) string {
 		return ""
 	}
 
-	// no namespace
-	ns = strings.TrimSpace(ns)
-	if len(ns) == 0 {
-		return service
-	}
-
-	return strings.Join([]string{ns, service}, ".")
+	return service
 }
 
 func methodName(parts []string) string {

@@ -18,9 +18,8 @@ type Option func(o *Options)
 
 func newOptions(opts ...Option) Options {
 	options := Options{
-		Namespace: "go.micro.api",
-		Handler:   "meta",
-		Registry:  *cmd.DefaultOptions().Registry,
+		Handler:  "meta",
+		Registry: *cmd.DefaultOptions().Registry,
 	}
 
 	for _, o := range opts {
