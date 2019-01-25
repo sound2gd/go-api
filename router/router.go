@@ -359,7 +359,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 
 		// construct api service
 		return &api.Service{
-			Name: rp.Name,
+			Name: name,
 			Endpoint: &api.Endpoint{
 				Name:    rp.Method,
 				Handler: handler,
@@ -370,7 +370,7 @@ func (r *router) Route(req *http.Request) (*api.Service, error) {
 	case "http", "proxy", "web":
 		// construct api service
 		return &api.Service{
-			Name: rp.Name,
+			Name: name,
 			Endpoint: &api.Endpoint{
 				Name:    req.URL.String(),
 				Handler: r.opts.Handler,
