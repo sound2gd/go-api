@@ -1,4 +1,4 @@
-package server
+package http
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestServer(t *testing.T) {
+func TestHTTPServer(t *testing.T) {
 	testResponse := "hello world"
 
 	s := NewServer("localhost:0")
