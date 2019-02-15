@@ -10,6 +10,7 @@ import (
 
 	"github.com/micro/go-api/handler"
 	"github.com/micro/go-api/router"
+	regRouter "github.com/micro/go-api/router/registry"
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/registry"
 	"github.com/micro/go-micro/registry/memory"
@@ -64,7 +65,7 @@ func testHttp(t *testing.T, path, service, ns string) {
 	}
 
 	// initialise the handler
-	rt := router.NewRouter(
+	rt := regRouter.NewRouter(
 		router.WithHandler("http"),
 		router.WithNamespace(ns),
 	)

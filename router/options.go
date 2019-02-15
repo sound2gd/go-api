@@ -16,7 +16,7 @@ type Options struct {
 
 type Option func(o *Options)
 
-func newOptions(opts ...Option) Options {
+func NewOptions(opts ...Option) Options {
 	options := Options{
 		Handler:  "meta",
 		Registry: *cmd.DefaultOptions().Registry,
