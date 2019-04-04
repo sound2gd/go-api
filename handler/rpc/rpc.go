@@ -3,7 +3,7 @@ package rpc
 
 import (
 	"encoding/json"
-	api2 "github.com/sound2gd/go-api/internal/api"
+	api2 "github.com/micro/go-api/internal/api"
 	"io"
 	"io/ioutil"
 	"net/http"
