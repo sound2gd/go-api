@@ -3,6 +3,7 @@ package rpc
 
 import (
 	"encoding/json"
+	api2 "github.com/sound2gd/go-api/internal/api"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -249,18 +250,20 @@ func requestPayload(r *http.Request) ([]byte, error) {
 func writeError(w http.ResponseWriter, r *http.Request, err error) {
 	ce := errors.Parse(err.Error())
 
-	switch ce.Code {
-	case 0:
-		// assuming it's totally screwed
-		ce.Code = 500
-		ce.Id = "go.micro.api"
-		ce.Status = http.StatusText(500)
-		ce.Detail = "error during request: " + ce.Detail
-		w.WriteHeader(500)
-	default:
-		w.WriteHeader(int(ce.Code))
-	}
+	//switch ce.Code {
+	//case 0:
+	//	// assuming it's totally screwed
+	//	ce.Code = 500
+	//	ce.Id = "go.micro.api"
+	//	ce.Status = http.StatusText(500)
+	//	ce.Detail = "error during request: " + ce.Detail
+	//	w.WriteHeader(500)
+	//default:
+	//	w.WriteHeader(int(ce.Code))
+	//}
 
+	// 返回200 OK
+	w.WriteHeader(200)
 	// response content type
 	w.Header().Set("Content-Type", "application/json")
 
@@ -272,7 +275,9 @@ func writeError(w http.ResponseWriter, r *http.Request, err error) {
 		w.Header().Set("grpc-message", ce.Detail)
 	}
 
-	w.Write([]byte(ce.Error()))
+	errRet := api2.NewApiErrorResult("error", ce.Detail)
+	bs, _ := json.Marshal(errRet)
+	w.Write(bs)
 }
 
 func writeResponse(w http.ResponseWriter, r *http.Request, rsp []byte) {
@@ -287,8 +292,10 @@ func writeResponse(w http.ResponseWriter, r *http.Request, rsp []byte) {
 		w.Header().Set("grpc-message", "")
 	}
 
+	successRet := api2.NewApiSuccessResult(string(rsp))
+	bs, _ := json.Marshal(successRet)
 	// write response
-	w.Write(rsp)
+	w.Write(bs)
 }
 
 func NewHandler(opts ...handler.Option) handler.Handler {
