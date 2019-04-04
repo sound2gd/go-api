@@ -4,7 +4,6 @@ require (
 	github.com/golang/protobuf v1.2.0
 	github.com/gorilla/handlers v1.4.0
 	github.com/gorilla/websocket v1.4.0
-	github.com/hashicorp/serf v0.8.2 // indirect
 	github.com/joncalhoun/qson v0.0.0-20170526102502-8a9cab3a62b1
 	github.com/micro/go-api v0.6.0
 	github.com/micro/go-log v0.1.0

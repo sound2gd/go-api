@@ -13,7 +13,7 @@ import (
 	"github.com/joncalhoun/qson"
 	"github.com/micro/go-api"
 	"github.com/micro/go-api/handler"
-	proto "github.com/micro/go-api/internal/proto"
+	"github.com/micro/go-api/internal/proto"
 	"github.com/micro/go-micro/client"
 	"github.com/micro/go-micro/codec"
 	"github.com/micro/go-micro/codec/jsonrpc"
@@ -282,7 +282,6 @@ func writeError(w http.ResponseWriter, r *http.Request, err error) {
 
 func writeResponse(w http.ResponseWriter, r *http.Request, rsp []byte) {
 	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
-	w.Header().Set("Content-Length", strconv.Itoa(len(rsp)))
 
 	// Set trailers
 	if strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
@@ -292,8 +291,8 @@ func writeResponse(w http.ResponseWriter, r *http.Request, rsp []byte) {
 		w.Header().Set("grpc-message", "")
 	}
 
-	successRet := api2.NewApiSuccessResult(string(rsp))
-	bs, _ := json.Marshal(successRet)
+	bs := api2.Success(string(rsp))
+	w.Header().Set("Content-Length", strconv.Itoa(len(bs)))
 	// write response
 	w.Write(bs)
 }

@@ -1,16 +1,14 @@
 package api
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type ApiResultCommon struct {
 	T       int64 `json:"t"`
 	Success bool  `json:"success"`
 	Status  bool  `json:"status"`
-}
-
-type ApiSuccessResult struct {
-	ApiResultCommon
-	Result interface{} `json:"result"`
 }
 
 type ApiErrorResult struct {
@@ -19,17 +17,10 @@ type ApiErrorResult struct {
 	ErrorMsg  string `json:"errorMsg"`
 }
 
-func NewApiSuccessResult(result interface{}) ApiSuccessResult {
+func Success(result string) []byte {
 	nowMillis := time.Now().UnixNano() / 1e6
-	apiRes := ApiSuccessResult{
-		Result: result,
-		ApiResultCommon: ApiResultCommon{
-			T:       nowMillis,
-			Success: true,
-			Status:  true,
-		},
-	}
-	return apiRes
+	ret := fmt.Sprintf(`{"t":%d,"success":true,"status":true,"result":%s}`, nowMillis, result)
+	return []byte(ret)
 }
 
 func NewApiErrorResult(errorCode, errorMsg string) ApiErrorResult {
@@ -42,17 +33,5 @@ func NewApiErrorResult(errorCode, errorMsg string) ApiErrorResult {
 		},
 		ErrorCode: errorCode,
 		ErrorMsg:  errorMsg,
-	}
-}
-
-func NewApiPredefinedErrorResult(errMsg ApiErrorMsg) ApiErrorResult {
-	nowMillis := time.Now().UnixNano() / 1e6
-	return ApiErrorResult{
-		ApiResultCommon: ApiResultCommon{
-			T:       nowMillis,
-			Success: false,
-		},
-		ErrorCode: errMsg.ErrorCode,
-		ErrorMsg:  errMsg.ErrorMsg,
 	}
 }
