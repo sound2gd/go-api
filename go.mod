@@ -1,4 +1,4 @@
-module github.com/micro/go-api
+module github.com/sound2gd/go-api
 
 require (
 	github.com/golang/protobuf v1.2.0
